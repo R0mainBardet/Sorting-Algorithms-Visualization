@@ -1,7 +1,24 @@
 #include <SDL2/SDL.h>
+#include <stdio.h>
+#include <stdbool.h>
 
 int WINDOW_WIDTH = 800;
 int WINDOW_HEIGHT = 600;
+
+typedef struct {
+    SDL_Rect rect;
+    SDL_Color color;
+} Button;
+
+void drawButton(SDL_Renderer* renderer, Button* button) {
+    SDL_SetRenderDrawColor(renderer, button->color.r, button->color.g, button->color.b, 255);
+    SDL_RenderFillRect(renderer, &button->rect);
+}
+
+bool isButtonClicked(Button* button, int x, int y) {
+    return x >= button->rect.x && x <= button->rect.x + button->rect.w &&
+           y >= button->rect.y && y <= button->rect.y + button->rect.h;
+}
 
 void drawRectangles(SDL_Renderer* renderer, int* numbers, int n) {
     float rectMenuWidth = 3.0/4.0 * (float)WINDOW_WIDTH;
@@ -31,7 +48,7 @@ void drawRectangles(SDL_Renderer* renderer, int* numbers, int n) {
 }
 
 void drawMenu(SDL_Renderer* renderer) {
-    float rectMenuWidth = 3.0/4.0 * (float)WINDOW_WIDTH;
+    float rectMenuWidth = 1.0/4.0 * (float)WINDOW_WIDTH;
     SDL_Rect menuRect;
 
     menuRect.x = 0;
@@ -41,6 +58,7 @@ void drawMenu(SDL_Renderer* renderer) {
 
     SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
     SDL_RenderFillRect(renderer, &menuRect);
+    SDL_RenderPresent(renderer);
 }
 
 int* generateIntegers(int n) {
@@ -62,7 +80,26 @@ int* randomizeIntegers(int* arr, int n) {
 }
 
 void selectionSort(int* arr, int n, SDL_Renderer* renderer) {
-    for (int i = 0; i < n - 1; i++) {
+    bool running = true;
+    bool paused = false;
+
+    for (int i = 0; i < n - 1 && running; i++) {
+
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT)
+                running = false;
+
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE)
+                paused = !paused;
+        }
+
+        if (paused) {
+            i--;
+            SDL_Delay(10);
+            continue;
+        }
+
         int minIndex = i;
 
         for (int j = i + 1; j < n; j++) {
@@ -71,23 +108,18 @@ void selectionSort(int* arr, int n, SDL_Renderer* renderer) {
             }
         }
 
-        if (minIndex != i) {
-            int temp = arr[i];
-            arr[i] = arr[minIndex];
-            arr[minIndex] = temp;
-        }
+        int temp = arr[i];
+        arr[i] = arr[minIndex];
+        arr[minIndex] = temp;
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_Rect rightArea;
-        rightArea.x = WINDOW_WIDTH / 4;
-        rightArea.y = 0;
-        rightArea.w = 3 * WINDOW_WIDTH / 4;
-        rightArea.h = WINDOW_HEIGHT;
+        SDL_Rect rightArea = { WINDOW_WIDTH / 4, 0, 3 * WINDOW_WIDTH / 4, WINDOW_HEIGHT };
         SDL_RenderFillRect(renderer, &rightArea);
 
         drawRectangles(renderer, arr, n);
     }
 }
+
 
 
 int main(int argc, char* argv[]) {
@@ -109,15 +141,44 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    bool running = true;
+    SDL_Event event;
+    int n = 10000;
+
+    Button myButton = {{20, 20, 150, 50}, {255, 0, 0}};
+
+    SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
+    SDL_RenderClear(renderer);
+
     drawMenu(renderer);
+    drawButton(renderer, &myButton);
 
-    int n = 1000;
+    SDL_RenderPresent(renderer);
 
-    int* numbers = generateIntegers(n);
+    while (running) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                running = false;
+            }
+            if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    running = false;
+                }
+            }
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                int mouseX = event.button.x;
+                int mouseY = event.button.y;
 
-    int* randomNumbers = randomizeIntegers(numbers, n);
-    selectionSort(randomNumbers, n, renderer);
+                if (isButtonClicked(&myButton, mouseX, mouseY)) {
+                    int* numbers = generateIntegers(n);
+                    int* randomNumbers = randomizeIntegers(numbers, n);
+                    selectionSort(randomNumbers, n, renderer);
+                }
+            }
+        }
+    }
 
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;
