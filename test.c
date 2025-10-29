@@ -1,49 +1,98 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+#define window_name "Sorting algorithm visualization"
+#define INITIAL_WIDTH 800
+#define INITIAL_HEIGHT 600
 
 int main() {
+    int n = 500;
+    int win_width = INITIAL_WIDTH;
+    int win_height = INITIAL_HEIGHT;
 
-    // Initialiser SDL et verifie si il y a des erreurs d'initialisation
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+    int *tableau = malloc(n * sizeof(int));
+    if (!tableau) {
+        printf("Erreur d'allocation mémoire\n");
         return 1;
     }
 
-    int n = 100;
-    int array[n];
-    int win_width = 800;
-    int win_height = 600;
-
-    for(int i = 0; i < n; i++) {
-        array[i] = n - i;
+    for (int i = 0; i < n; i++) {
+        tableau[i] = i + 1;
     }
-    printf("%d", array[0]);
 
-    // Creer une fenetre SDL 
-    SDL_Window* window = SDL_CreateWindow("Sorting algorithm visualization",
-                                          SDL_WINDOWPOS_CENTERED,
-                                          SDL_WINDOWPOS_CENTERED,
-                                          win_width, win_height,
-                                          SDL_WINDOW_SHOWN);
-    // Verifie si la fenetre est creee correctement sinon retourne une erreur
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        printf("Erreur SDL_Init : %s\n", SDL_GetError());
+        free(tableau);
+        return 1;
+    }
+
+    SDL_Window *window = SDL_CreateWindow(
+        window_name,
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        win_width, win_height,
+        SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE  // ✅ fenetre redimensionnable
+    );
+
     if (!window) {
-        printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+        printf("Erreur SDL_CreateWindow : %s\n", SDL_GetError());
         SDL_Quit();
+        free(tableau);
         return 1;
     }
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if (!renderer) {
+        printf("Erreur SDL_CreateRenderer : %s\n", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        free(tableau);
+        return 1;
+    }
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // white bars
-    SDL_RenderFillRect(renderer, &bar);
-    
-    // Delai de 3000 milliseconds (3 seconds)
-    SDL_Delay(3000);
+    int running = 1;
+    SDL_Event event;
 
-    // detruire la fenetre et quitter SDL
+    while (running) {
+        // Gestion des événements
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                running = 0;
+            }
+            else if (event.type == SDL_WINDOWEVENT &&
+                     event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                // ✅ Met à jour la taille quand la fenêtre change
+                win_width = event.window.data1;
+                win_height = event.window.data2;
+            }
+        }
+
+        float width_rectangle = (float)win_width / n;
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        float posx = 0;
+        for (int i = 0; i < n; i++) {
+            SDL_Rect bar;
+            bar.w = width_rectangle;
+            bar.h = (tableau[i] * win_height) / n;
+            bar.x = posx;
+            bar.y = win_height - bar.h;
+
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            SDL_RenderFillRect(renderer, &bar);
+
+            posx += width_rectangle;
+        }
+
+        SDL_RenderPresent(renderer);
+    }
+
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-
+    free(tableau);
     return 0;
 }
