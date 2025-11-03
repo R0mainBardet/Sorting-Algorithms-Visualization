@@ -151,10 +151,23 @@ int main(int argc, char* argv[]) {
                     drawMenu(renderer, listButtons, numberRectList[numberRectListIndex], sortList[sortListIndex], font, oldMetrics, metrics);
                 }
                 if (numberRectListIndex == 6 && isButtonClicked(&listButtons[5], mouseX, mouseY)) {
+<<<<<<< HEAD
                     easteregg = true;
                     numberRectList[6] = 1216;
                     playMusic("easteregg.mp3");
                     SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
+=======
+                    easteregg = !easteregg;
+                    if (numberRectList[6] == 1261){
+                        numberRectList[6] = 1216;
+                        playMusic("easteregg.mp3");
+                        SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
+                    } else {
+                        numberRectList[6] = 1261;
+                        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+                        SDL_RenderFillRect(renderer, &rightArea);
+                    }
+>>>>>>> 6809ba4 (Possibilité de repasser en mode normal)
                     drawMenu(renderer, listButtons, numberRectList[numberRectListIndex], sortList[sortListIndex], font, oldMetrics, metrics);
                     drawRectangles(renderer, generateIntegers(numberRectList[numberRectListIndex]), numberRectList[numberRectListIndex], -1);
                 }
