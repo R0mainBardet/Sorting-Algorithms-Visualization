@@ -1,6 +1,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "globals.h"
 #include "utils.h"
@@ -240,4 +242,13 @@ void drawMenu(SDL_Renderer* renderer, Button* buttons, int numberOfRect, char* s
     renderMetrics(renderer, TTF_OpenFont("arial.ttf", WINDOW_WIDTH * 0.018), metrics, oldMetrics, TextMetricsRect);
 
     SDL_RenderPresent(renderer);
+}
+
+void playMusic(const char* musicFile) {
+    Mix_Music* music = Mix_LoadMUS(musicFile);
+    if (!music) {
+        printf("Erreur Mix_LoadMUS: %s\n", Mix_GetError());
+        return;
+    }
+    Mix_PlayMusic(music, 1);
 }

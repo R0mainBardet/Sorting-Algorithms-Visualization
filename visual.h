@@ -9,3 +9,5 @@ void renderTextInButton(SDL_Renderer* renderer, TTF_Font* font, const char* text
 void renderMetrics(SDL_Renderer* renderer, TTF_Font* font, Metrics metrics, Metrics oldMetrics, SDL_Rect TextMetricsRect);
 
 void drawMenu(SDL_Renderer* renderer, Button* buttons, int numberOfRect, char* sort, TTF_Font* font, Metrics oldMetrics, Metrics metrics);
+
+void playMusic(const char* musicFile);

@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "globals.h"
 #include "utils.h"
@@ -10,9 +11,12 @@
 #include "visual.h"
 #include "stats.h"
 
+#define MIX_DEFAULT_FORMAT AUDIO_S16SYS
+
 int WINDOW_WIDTH = 800;
 int WINDOW_HEIGHT = 600;
 bool easteregg = false;
+
 
 int numberRectList[] = {10, 50, 100, 250, 500, 1000, 1261, 5000, 10000};
 char* sortList[] = {"Selection Sort", "Insertion Sort"};
@@ -65,6 +69,16 @@ int main(int argc, char* argv[]) {
     SDL_Texture* textureFond = chargerTexture(renderer, "fond.jpg");
     if (!textureFond) {
         printf("Erreur lors du chargement du fond\n");
+        return 1;
+    }
+
+    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+        printf("Erreur SDL_Init: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        printf("Erreur Mix_OpenAudio: %s\n", Mix_GetError());
         return 1;
     }
 
@@ -139,6 +153,7 @@ int main(int argc, char* argv[]) {
                 if (numberRectListIndex == 6 && isButtonClicked(&listButtons[5], mouseX, mouseY)) {
                     easteregg = true;
                     numberRectList[6] = 1216;
+                    playMusic("easteregg.mp3");
                     SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
                     drawMenu(renderer, listButtons, numberRectList[numberRectListIndex], sortList[sortListIndex], font, oldMetrics, metrics);
                     drawRectangles(renderer, generateIntegers(numberRectList[numberRectListIndex]), numberRectList[numberRectListIndex], -1);
@@ -183,7 +198,7 @@ int main(int argc, char* argv[]) {
 
 /*
 
-gcc main.c utils.c sorting.c visual.c stats.c -o sorting `sdl2-config --cflags --libs` -lSDL2_ttf -lSDL2_image
+gcc main.c utils.c sorting.c visual.c stats.c -o sorting `sdl2-config --cflags --libs` -lSDL2_ttf -lSDL2_image -lSDL2_mixer
 ./sorting
 
 */
