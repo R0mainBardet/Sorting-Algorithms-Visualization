@@ -252,3 +252,8 @@ void playMusic(const char* musicFile) {
     }
     Mix_PlayMusic(music, 1);
 }
+
+void stopMusic() {
+    Mix_HaltMusic();
+    Mix_FreeMusic(NULL);
+}

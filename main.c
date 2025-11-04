@@ -151,17 +151,15 @@ int main(int argc, char* argv[]) {
                     drawMenu(renderer, listButtons, numberRectList[numberRectListIndex], sortList[sortListIndex], font, oldMetrics, metrics);
                 }
                 if (numberRectListIndex == 6 && isButtonClicked(&listButtons[5], mouseX, mouseY)) {
-                    easteregg = true;
-                    numberRectList[6] = 1216;
-                    playMusic("easteregg.mp3");
-                    SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
                     easteregg = !easteregg;
                     if (numberRectList[6] == 1261){
+                        easteregg = false;
                         numberRectList[6] = 1216;
-                        fplayMusic("easteregg.mp3");
+                        playMusic("easteregg.mp3");
                         SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
                     } else {
                         numberRectList[6] = 1261;
+                        stopMusic();
                         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
                         SDL_RenderFillRect(renderer, &rightArea);
                     }
