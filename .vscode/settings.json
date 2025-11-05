@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "sdl.h": "c",
-        "globals.h": "c"
+        "globals.h": "c",
+        "stdbool.h": "c"
     }
 }

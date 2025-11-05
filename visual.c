@@ -7,6 +7,7 @@
 #include "globals.h"
 #include "utils.h"
 
+// Load the texture
 SDL_Texture* chargerTexture(SDL_Renderer* renderer, const char* chemin) {
     SDL_Surface* surface = IMG_Load(chemin);
     if (!surface) {
@@ -18,11 +19,13 @@ SDL_Texture* chargerTexture(SDL_Renderer* renderer, const char* chemin) {
     return texture;
 }
 
+// Draw the button in argument
 void drawButton(SDL_Renderer* renderer, Button* button) {
     SDL_SetRenderDrawColor(renderer, button->color.r, button->color.g, button->color.b, 255);
     SDL_RenderFillRect(renderer, &button->rect);
 }
 
+// Draw all the bar in the graph with the number list
 void drawRectangles(SDL_Renderer* renderer, int* numbers, int n, int actualValue) {
     float rectMenuWidth = 3.0/4.0 * (float)WINDOW_WIDTH;
     float rectWidth = rectMenuWidth / n;
@@ -53,6 +56,7 @@ void drawRectangles(SDL_Renderer* renderer, int* numbers, int n, int actualValue
     SDL_RenderPresent(renderer);
 }
 
+// Put the text in the corresponding rectangle
 void renderTextInButton(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color, SDL_Rect buttonRect) {
     SDL_Surface* surf = TTF_RenderText_Blended(font, text, color);
     SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, surf);
@@ -69,6 +73,7 @@ void renderTextInButton(SDL_Renderer* renderer, TTF_Font* font, const char* text
     SDL_DestroyTexture(tex);
 }
 
+// Create and show the metrics in the menu
 void renderMetrics(SDL_Renderer* renderer, TTF_Font* font, Metrics metrics, Metrics oldMetrics, SDL_Rect TextMetricsRect) {
 
     SDL_Color white = {255, 255, 255, 255};
@@ -167,6 +172,7 @@ void renderMetrics(SDL_Renderer* renderer, TTF_Font* font, Metrics metrics, Metr
     SDL_DestroyTexture(texMain3);
 }
 
+// Draw the menu and create all the elements it contains
 void drawMenu(SDL_Renderer* renderer, Button* buttons, int numberOfRect, char* sort, TTF_Font* font, Metrics oldMetrics, Metrics metrics) {
 
     createButtons(buttons);
@@ -244,6 +250,7 @@ void drawMenu(SDL_Renderer* renderer, Button* buttons, int numberOfRect, char* s
     SDL_RenderPresent(renderer);
 }
 
+// Play the music in arguments
 void playMusic(const char* musicFile) {
     Mix_Music* music = Mix_LoadMUS(musicFile);
     if (!music) {
@@ -253,6 +260,7 @@ void playMusic(const char* musicFile) {
     Mix_PlayMusic(music, 1);
 }
 
+// Stop the music
 void stopMusic() {
     Mix_HaltMusic();
     Mix_FreeMusic(NULL);

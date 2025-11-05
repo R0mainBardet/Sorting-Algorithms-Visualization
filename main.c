@@ -9,25 +9,26 @@
 #include "utils.h"
 #include "sorting.h"
 #include "visual.h"
-#include "stats.h"
 
 #define MIX_DEFAULT_FORMAT AUDIO_S16SYS
 
+// Global variables
 int WINDOW_WIDTH = 800;
 int WINDOW_HEIGHT = 600;
 bool easteregg = false;
-
-
 int numberRectList[] = {10, 50, 100, 250, 500, 1000, 1261, 5000, 10000};
-char* sortList[] = {"Selection Sort", "Insertion Sort"};
+char* sortList[] = {"Selection Sort", "Insertion Sort", "Bubble Sort", "Quicksort"};
 int sortListIndex = 0;
 int numberRectListIndex = 0;
 Metrics oldMetrics = {0, 0, 0};
 Metrics metrics = {0, 0, 0};
 Button listButtons[6];
+int mouseX = 0;
+int mouseY = 0;
 
 int main(int argc, char* argv[]) {
 
+    // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         printf("Erreur SDL_Init: %s\n", SDL_GetError());
         return 1;
@@ -82,6 +83,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // Initial rendering: clear screen, draw menu, draw rectangles representing numbers, define drawing area for sorting visualization
     bool running = true;
     SDL_Event event;
 
@@ -95,11 +97,13 @@ int main(int argc, char* argv[]) {
             if (event.type == SDL_QUIT) {
                 running = false;
             } else if (event.type == SDL_WINDOWEVENT){
+                // Window resize
                 if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
                     WINDOW_WIDTH = event.window.data1;
                     WINDOW_HEIGHT = event.window.data2;
                     font = TTF_OpenFont("arial.ttf", WINDOW_WIDTH * 0.03);
                     SDL_Rect rightArea = { WINDOW_WIDTH / 4, 0, 3 * WINDOW_WIDTH / 4, WINDOW_HEIGHT };
+                    // Handeling the easteregg
                     if (easteregg && textureFond) {
                         SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
                     } else {
@@ -111,15 +115,17 @@ int main(int argc, char* argv[]) {
                     SDL_RenderPresent(renderer);
                 }
             }
+            // Pause the sorting
             if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     running = false;
                 }
             }
+            // Mouse clicks
             if (event.type == SDL_MOUSEBUTTONDOWN) {
-                int mouseX = event.button.x;
-                int mouseY = event.button.y;
-
+                mouseX = event.button.x;
+                mouseY = event.button.y;
+                // Change the number of values
                 if (isButtonClicked(&listButtons[0], mouseX, mouseY)) {
                     numberRectListIndex = (numberRectListIndex - 1 + (sizeof(numberRectList)/sizeof(numberRectList[0]))) % (sizeof(numberRectList)/sizeof(numberRectList[0]));
                     drawMenu(renderer, listButtons, numberRectList[numberRectListIndex], sortList[sortListIndex], font, oldMetrics, metrics);
@@ -142,6 +148,7 @@ int main(int argc, char* argv[]) {
                     }
                     drawRectangles(renderer, generateIntegers(numberRectList[numberRectListIndex]), numberRectList[numberRectListIndex], -1);
                 }
+                // Change the sorting
                 if (isButtonClicked(&listButtons[2], mouseX, mouseY)) {
                     sortListIndex = (sortListIndex + 1) % (sizeof(sortList)/sizeof(sortList[0]));
                     drawMenu(renderer, listButtons, numberRectList[numberRectListIndex], sortList[sortListIndex], font, oldMetrics, metrics);
@@ -150,10 +157,10 @@ int main(int argc, char* argv[]) {
                     sortListIndex = (sortListIndex - 1 + (sizeof(sortList)/sizeof(sortList[0]))) % (sizeof(sortList)/sizeof(sortList[0]));
                     drawMenu(renderer, listButtons, numberRectList[numberRectListIndex], sortList[sortListIndex], font, oldMetrics, metrics);
                 }
+                // Enable the easteregg
                 if (numberRectListIndex == 6 && isButtonClicked(&listButtons[5], mouseX, mouseY)) {
                     easteregg = !easteregg;
                     if (numberRectList[6] == 1261){
-                        easteregg = false;
                         numberRectList[6] = 1216;
                         playMusic("easteregg.mp3");
                         SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
@@ -166,36 +173,13 @@ int main(int argc, char* argv[]) {
                     drawMenu(renderer, listButtons, numberRectList[numberRectListIndex], sortList[sortListIndex], font, oldMetrics, metrics);
                     drawRectangles(renderer, generateIntegers(numberRectList[numberRectListIndex]), numberRectList[numberRectListIndex], -1);
                 }
-                if (isButtonClicked(&listButtons[4], mouseX, mouseY)) {
-                    oldMetrics = metrics;
-                    metrics.memAccess = 0;
-                    metrics.comparisons = 0;
-                    metrics.timeElapsed = 0;
-                    int* numbers = generateIntegers(numberRectList[numberRectListIndex]);
-                    int* randomNumbers = randomizeIntegers(numbers, numberRectList[numberRectListIndex]);
-                    Uint64 start = 0;
-                    Uint64 end = 0;
-                    switch (sortListIndex) {
-                        case 0:
-                            start = SDL_GetPerformanceCounter();
-                            metrics = selectionSort(textureFond, font, randomNumbers, numberRectList[numberRectListIndex], renderer, metrics);
-                            end = SDL_GetPerformanceCounter();
-                            break;
-                        case 1:
-                            start = SDL_GetPerformanceCounter();
-                            metrics = insertionSort(textureFond, font, randomNumbers, numberRectList[numberRectListIndex], renderer, metrics);
-                            end = SDL_GetPerformanceCounter();
-                            break;
-                        default:
-                            break;
-                    }
-                    metrics.timeElapsed = (double)(end - start) / SDL_GetPerformanceFrequency();
-                    drawMenu(renderer, listButtons, numberRectList[numberRectListIndex], sortList[sortListIndex], font, oldMetrics, metrics);
-                }
+                // Launch the sort
+                launchSort(textureFond, font, renderer, listButtons);
             }
         }
     }
 
+    // Clear everything
     TTF_CloseFont(font);
     TTF_Quit();
     SDL_DestroyRenderer(renderer);
@@ -206,7 +190,7 @@ int main(int argc, char* argv[]) {
 
 /*
 
-gcc main.c utils.c sorting.c visual.c stats.c -o sorting `sdl2-config --cflags --libs` -lSDL2_ttf -lSDL2_image -lSDL2_mixer
+gcc main.c utils.c sorting.c visual.c -o sorting `sdl2-config --cflags --libs` -lSDL2_ttf -lSDL2_image -lSDL2_mixer
 ./sorting
 
 */

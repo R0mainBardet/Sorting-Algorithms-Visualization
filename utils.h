@@ -5,3 +5,5 @@ bool isButtonClicked(Button* button, int x, int y);
 int* generateIntegers(int n);
 
 int* randomizeIntegers(int* arr, int n);
+
+void launchSort(SDL_Texture* textureFond, TTF_Font* font, SDL_Renderer* renderer, Button* listButtons);
