@@ -6,7 +6,7 @@
 #include "utils.h"
 
 // Selection sort
-Metrics selectionSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SDL_Renderer* renderer, Metrics metrics) {
+Metrics selectionSort(int n) {
     bool running = true;
     bool paused = false;
 
@@ -31,25 +31,19 @@ Metrics selectionSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n,
         for (int j = i + 1; j < n; j++) {
             metrics.memAccess += 2;
             metrics.comparisons++;
-            if (arr[j] < arr[minIndex]) {
+            if (numbers[j] < numbers[minIndex]) {
                 minIndex = j;
             }
         }
 
-        int temp = arr[i];
-        arr[i] = arr[minIndex];
-        arr[minIndex] = temp;
+        float temp = numbers[i];
+        numbers[i] = numbers[minIndex];
+        numbers[minIndex] = temp;
         
         SDL_Rect rightArea = { WINDOW_WIDTH / 4, 0, 3 * WINDOW_WIDTH / 4, WINDOW_HEIGHT };
-        if (easteregg && textureFond) {
-            SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
-        } else {
-            SDL_Rect rightArea = { WINDOW_WIDTH / 4, 0, 3 * WINDOW_WIDTH / 4, WINDOW_HEIGHT };
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_RenderFillRect(renderer, &rightArea);
-        }
+        enableEasteregg(rightArea);
 
-        drawRectangles(renderer, arr, n, arr[i]);
+        drawRectangles(numbers, n, numbers[i]);
 
         SDL_RenderPresent(renderer);
     }
@@ -58,7 +52,7 @@ Metrics selectionSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n,
 }
 
 // Insertion sort
-Metrics insertionSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SDL_Renderer* renderer, Metrics metrics) {
+Metrics insertionSort(int n) {
     bool running = true;
     bool paused = false;
     SDL_Rect rightArea = { WINDOW_WIDTH / 4, 0, 3 * WINDOW_WIDTH / 4, WINDOW_HEIGHT };
@@ -79,13 +73,13 @@ Metrics insertionSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n,
             continue;
         }
 
-        int key = arr[i];
+        float key = numbers[i];
         int j = i - 1;
 
-        while (j >= 0 && arr[j] > key) {
+        while (j >= 0 && numbers[j] > key) {
             metrics.memAccess += 2;
             metrics.comparisons++;
-            arr[j + 1] = arr[j];
+            numbers[j + 1] = numbers[j];
             j--;
 
             if (easteregg){
@@ -95,25 +89,20 @@ Metrics insertionSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n,
                 SDL_RenderFillRect(renderer, &rightArea);
             }
 
-            drawRectangles(renderer, arr, n, key);
+            drawRectangles(numbers, n, key);
         }
 
-        arr[j + 1] = key;
+        numbers[j + 1] = key;
 
-        if (easteregg && textureFond) {
-            SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
-        } else {
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_RenderFillRect(renderer, &rightArea);
-        }
+        enableEasteregg(rightArea);
 
-        drawRectangles(renderer, arr, n, key);
+        drawRectangles(numbers, n, key);
     }
     return metrics;
 }
 
 // Bubble sort
-Metrics bubbleSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SDL_Renderer* renderer, Metrics metrics) {
+Metrics bubbleSort(int n) {
     bool running = true;
     bool paused = false;
 
@@ -151,22 +140,17 @@ Metrics bubbleSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SD
         for (int j = 0; j < n - i - 1; j++) {
             metrics.memAccess += 2;
             metrics.comparisons++;
-            if (arr[j] > arr[j + 1]) {
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
+            if (numbers[j] > numbers[j + 1]) {
+                float temp = numbers[j];
+                numbers[j] = numbers[j + 1];
+                numbers[j + 1] = temp;
             }
         }
 
         SDL_Rect rightArea = { WINDOW_WIDTH / 4, 0, 3 * WINDOW_WIDTH / 4, WINDOW_HEIGHT };
-        if (easteregg && textureFond) {
-            SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
-        } else {
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_RenderFillRect(renderer, &rightArea);
-        }
+        enableEasteregg(rightArea);
 
-        drawRectangles(renderer, arr, n, arr[n - i - 1]);
+        drawRectangles(numbers, n, numbers[n - i - 1]);
 
         SDL_RenderPresent(renderer);
     }
@@ -175,13 +159,13 @@ Metrics bubbleSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SD
 }
 
 // Quick sort
-Metrics quicksort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SDL_Renderer* renderer, Metrics metrics) {
+Metrics quicksort(int n) {
     bool running = true;
     bool paused = false;
 
     SDL_Rect rightArea = { WINDOW_WIDTH / 4, 0, 3 * WINDOW_WIDTH / 4, WINDOW_HEIGHT };
 
-    void quicksortRec(int* arr, int low, int high) {
+    void quicksortRec(float* numbers, int low, int high) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT)
@@ -194,54 +178,44 @@ Metrics quicksort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SDL
 
         if (paused) {
             SDL_Delay(10);
-            quicksortRec(arr, low, high);
+            quicksortRec(numbers, low, high);
             return;
         }
 
         if (low < high && running) {
-            int pivot = arr[high];
+            float pivot = numbers[high];
             metrics.memAccess++;
             int i = (low - 1);
 
             for (int j = low; j < high; j++) {
                 metrics.memAccess += 2;
                 metrics.comparisons++;
-                if (arr[j] < pivot) {
+                if (numbers[j] < pivot) {
                     i++;
-                    int temp = arr[i];
-                    arr[i] = arr[j];
-                    arr[j] = temp;
+                    float temp = numbers[i];
+                    numbers[i] = numbers[j];
+                    numbers[j] = temp;
                 }
 
-                if (easteregg && textureFond) {
-                    SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
-                } else {
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                    SDL_RenderFillRect(renderer, &rightArea);
-                }
-                drawRectangles(renderer, arr, n, arr[j]);
+                enableEasteregg(rightArea);
+                drawRectangles(numbers, n, numbers[j]);
                 SDL_RenderPresent(renderer);
             }
 
-            int temp = arr[i + 1];
-            arr[i + 1] = arr[high];
-            arr[high] = temp;
+            float temp = numbers[i + 1];
+            numbers[i + 1] = numbers[high];
+            numbers[high] = temp;
             int pi = i + 1;
 
-            if (easteregg && textureFond) {
-                SDL_RenderCopy(renderer, textureFond, NULL, &rightArea);
-            } else {
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                SDL_RenderFillRect(renderer, &rightArea);
-            }
-            drawRectangles(renderer, arr, n, arr[pi]);
+            enableEasteregg(rightArea);
+            drawRectangles(numbers, n, numbers[pi]);
             SDL_RenderPresent(renderer);
 
-            quicksortRec(arr, low, pi - 1);
-            quicksortRec(arr, pi + 1, high);
+            quicksortRec(numbers, low, pi - 1);
+            quicksortRec(numbers, pi + 1, high);
         }
     }
 
-    quicksortRec(arr, 0, n - 1);
+    quicksortRec(numbers, 0, n - 1);
     return metrics;
 }

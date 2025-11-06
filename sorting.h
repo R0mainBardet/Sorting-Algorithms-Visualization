@@ -1,7 +1,7 @@
-Metrics selectionSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SDL_Renderer* renderer, Metrics metrics);
+Metrics selectionSort(int n);
 
-Metrics insertionSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SDL_Renderer* renderer, Metrics metrics);
+Metrics insertionSort(int n);
 
-Metrics bubbleSort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SDL_Renderer* renderer, Metrics metrics);
+Metrics bubbleSort(int n);
 
-Metrics quicksort(SDL_Texture* textureFond, TTF_Font* font, int* arr, int n, SDL_Renderer* renderer, Metrics metrics);
+Metrics quicksort(int n);

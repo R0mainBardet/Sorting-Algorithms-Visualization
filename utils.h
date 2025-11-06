@@ -1,9 +1,17 @@
-Button* createButtons(Button* buttons);
+void createButtons();
 
-bool isButtonClicked(Button* button, int x, int y);
+bool isButtonClicked(Button* button);
+
+float* generateNumbers(int n);
 
 int* generateIntegers(int n);
 
-int* randomizeIntegers(int* arr, int n);
+float* generateFloats(int n);
 
-void launchSort(SDL_Texture* textureFond, TTF_Font* font, SDL_Renderer* renderer, Button* listButtons);
+float* randomizeNumbers(float* arr, int n);
+
+bool isNumberListSorted(float* arr, int n);
+
+void launchSort(SDL_Rect rightArea);
+
+void enableEasteregg(SDL_Rect rightArea);

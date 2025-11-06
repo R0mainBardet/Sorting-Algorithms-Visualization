@@ -8,7 +8,7 @@
 #include "utils.h"
 
 // Load the texture
-SDL_Texture* chargerTexture(SDL_Renderer* renderer, const char* chemin) {
+SDL_Texture* chargerTexture(const char* chemin) {
     SDL_Surface* surface = IMG_Load(chemin);
     if (!surface) {
         printf("IMG_Load Error: %s\n", IMG_GetError());
@@ -20,33 +20,37 @@ SDL_Texture* chargerTexture(SDL_Renderer* renderer, const char* chemin) {
 }
 
 // Draw the button in argument
-void drawButton(SDL_Renderer* renderer, Button* button) {
+void drawButton(Button* button) {
     SDL_SetRenderDrawColor(renderer, button->color.r, button->color.g, button->color.b, 255);
     SDL_RenderFillRect(renderer, &button->rect);
 }
 
 // Draw all the bar in the graph with the number list
-void drawRectangles(SDL_Renderer* renderer, int* numbers, int n, int actualValue) {
+void drawRectangles(float* arr, int n, int actualValue) {
     float rectMenuWidth = 3.0/4.0 * (float)WINDOW_WIDTH;
     float rectWidth = rectMenuWidth / n;
     float x = 0;
 
     int maxValue = 0;
     for (int i = 0; i < n; i++)
-        if (numbers[i] > maxValue) maxValue = numbers[i];
+        if (arr[i] > maxValue) maxValue = arr[i];
 
     float scale = (float)WINDOW_HEIGHT / maxValue;
 
     for (int i = 0; i < n; i++) {
         SDL_Rect rect;
-        rect.h = numbers[i] * scale;
+        rect.h = arr[i] * scale;
         rect.y = WINDOW_HEIGHT - rect.h;
         rect.x = WINDOW_WIDTH-rectMenuWidth + (int)x;
         rect.w = (int)(x + rectWidth) - (int)x;
-        if (numbers[i] == actualValue) {
+        if (arr[i] == actualValue) {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         } else {
-            SDL_SetRenderDrawColor(renderer, (i * 255) / n, 100, 150, 255);
+            if (isInteger){
+                SDL_SetRenderDrawColor(renderer, (i * 255) / n, 100, 150, 255);
+            } else {
+                SDL_SetRenderDrawColor(renderer, 100, (i * 255) / n, 150, 255);
+            }
         }
         SDL_RenderFillRect(renderer, &rect);
 
@@ -57,7 +61,7 @@ void drawRectangles(SDL_Renderer* renderer, int* numbers, int n, int actualValue
 }
 
 // Put the text in the corresponding rectangle
-void renderTextInButton(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color, SDL_Rect buttonRect) {
+void renderTextInButton(const char* text, SDL_Color color, SDL_Rect buttonRect) {
     SDL_Surface* surf = TTF_RenderText_Blended(font, text, color);
     SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, surf);
 
@@ -74,7 +78,7 @@ void renderTextInButton(SDL_Renderer* renderer, TTF_Font* font, const char* text
 }
 
 // Create and show the metrics in the menu
-void renderMetrics(SDL_Renderer* renderer, TTF_Font* font, Metrics metrics, Metrics oldMetrics, SDL_Rect TextMetricsRect) {
+void renderMetrics(TTF_Font* font, SDL_Rect TextMetricsRect) {
 
     SDL_Color white = {255, 255, 255, 255};
     SDL_Color green = {0, 255, 0, 255};
@@ -173,9 +177,8 @@ void renderMetrics(SDL_Renderer* renderer, TTF_Font* font, Metrics metrics, Metr
 }
 
 // Draw the menu and create all the elements it contains
-void drawMenu(SDL_Renderer* renderer, Button* buttons, int numberOfRect, char* sort, TTF_Font* font, Metrics oldMetrics, Metrics metrics) {
-
-    createButtons(buttons);
+void drawMenu(int numberOfRect, char* sort) {
+    createButtons();
 
     float rectMenuWidth = WINDOW_WIDTH / 4.0f;
     SDL_Rect menuRect = {0, 0, rectMenuWidth, WINDOW_HEIGHT};
@@ -193,7 +196,7 @@ void drawMenu(SDL_Renderer* renderer, Button* buttons, int numberOfRect, char* s
     SDL_RenderFillRect(renderer, &TextSupportRect);
 
     for (int i = 0; i < 6; i++) {
-        drawButton(renderer, &buttons[i]);
+        drawButton(&listButtons[i]);
     }
 
     SDL_Color color = {255, 255, 255, 255};
@@ -203,36 +206,21 @@ void drawMenu(SDL_Renderer* renderer, Button* buttons, int numberOfRect, char* s
     SDL_Surface* textSurfaceNumberRect = TTF_RenderText_Blended(font, numberOfValuesText, color);
     SDL_Texture* textTextureNumberRect = SDL_CreateTextureFromSurface(renderer, textSurfaceNumberRect);
     SDL_FreeSurface(textSurfaceNumberRect);
-    renderTextInButton(renderer, font, numberOfValuesText, color, buttons[5].rect);
+    renderTextInButton(numberOfValuesText, color, listButtons[5].rect);
 
     SDL_DestroyTexture(textTextureNumberRect);
 
-    SDL_Surface* textSurfaceSort = TTF_RenderText_Blended(font, sort, color);
-    SDL_Texture* textTextureSort = SDL_CreateTextureFromSurface(renderer, textSurfaceSort);
-    SDL_FreeSurface(textSurfaceSort);
-    renderTextInButton(renderer, font, sort, color, TextSupportRect);
-    SDL_DestroyTexture(textTextureSort);
+    renderTextInButton(sort, color, TextSupportRect);
 
-    SDL_Surface* sPrev = TTF_RenderText_Blended(font, "<", color);
-    SDL_Surface* sNext = TTF_RenderText_Blended(font, ">", color);
-    SDL_Surface* sStart = TTF_RenderText_Blended(font, "Start", color);
-
-    SDL_Texture* tPrev = SDL_CreateTextureFromSurface(renderer, sPrev);
-    SDL_Texture* tNext = SDL_CreateTextureFromSurface(renderer, sNext);
-    SDL_Texture* tStart = SDL_CreateTextureFromSurface(renderer, sStart);
-
-    renderTextInButton(renderer, font, "<", color, buttons[0].rect);
-    renderTextInButton(renderer, font, ">", color, buttons[1].rect);
-    renderTextInButton(renderer, font, "<", color, buttons[2].rect);
-    renderTextInButton(renderer, font, ">", color, buttons[3].rect);
-    renderTextInButton(renderer, font, "Start", color, buttons[4].rect);
-
-    SDL_FreeSurface(sPrev);
-    SDL_FreeSurface(sNext);
-    SDL_FreeSurface(sStart);
-    SDL_DestroyTexture(tPrev);
-    SDL_DestroyTexture(tNext);
-    SDL_DestroyTexture(tStart);
+    renderTextInButton("<", color, listButtons[0].rect);
+    renderTextInButton(">", color, listButtons[1].rect);
+    renderTextInButton("<", color, listButtons[2].rect);
+    renderTextInButton(">", color, listButtons[3].rect);
+    if (isNumberListSorted(numbers, numberRectList[numberRectListIndex]))
+        renderTextInButton("Random", color, listButtons[4].rect);
+    else {
+        renderTextInButton("Start", color, listButtons[4].rect);
+    }
 
     SDL_Rect TextMetricsRect;
     TextMetricsRect.x = WINDOW_WIDTH / 40.0;
@@ -245,7 +233,7 @@ void drawMenu(SDL_Renderer* renderer, Button* buttons, int numberOfRect, char* s
     SDL_RenderFillRect(renderer, &TextMetricsRect);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 
-    renderMetrics(renderer, TTF_OpenFont("arial.ttf", WINDOW_WIDTH * 0.018), metrics, oldMetrics, TextMetricsRect);
+    renderMetrics(fontMetrics, TextMetricsRect);
 
     SDL_RenderPresent(renderer);
 }
