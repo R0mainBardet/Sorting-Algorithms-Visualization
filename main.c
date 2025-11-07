@@ -118,6 +118,10 @@ int main(int argc, char* argv[]) {
                 if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
                     WINDOW_WIDTH = event.window.data1;
                     WINDOW_HEIGHT = event.window.data2;
+                    rightArea.x = WINDOW_WIDTH / 4;
+                    rightArea.y = 0;
+                    rightArea.w = 3 * WINDOW_WIDTH / 4;
+                    rightArea.h = WINDOW_HEIGHT;
                     TTF_Font* newFont = TTF_OpenFont("arial.ttf", WINDOW_WIDTH * 0.03);
                     if (newFont) {
                         TTF_CloseFont(font);
@@ -143,8 +147,7 @@ int main(int argc, char* argv[]) {
                     numbers = generateNumbers(numberRectList[numberRectListIndex]);
                     if (numbers != NULL)
                         numbers = randomizeNumbers(numbers, numberRectList[numberRectListIndex]);
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                    SDL_RenderFillRect(renderer, &rightArea);
+                    enableEasteregg(rightArea);
                     drawMenu(numberRectList[numberRectListIndex], sortList[sortListIndex]);
                     drawRectangles(numbers, numberRectList[numberRectListIndex], -1);
                 }
@@ -153,8 +156,7 @@ int main(int argc, char* argv[]) {
                     numbers = generateNumbers(numberRectList[numberRectListIndex]);
                     if (numbers != NULL)
                         numbers = randomizeNumbers(numbers, numberRectList[numberRectListIndex]);
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                    SDL_RenderFillRect(renderer, &rightArea);
+                    enableEasteregg(rightArea);
                     drawMenu(numberRectList[numberRectListIndex], sortList[sortListIndex]);
                     drawRectangles(numbers, numberRectList[numberRectListIndex], -1);
                 }

@@ -115,7 +115,6 @@ bool isNumberListSorted(float* arr, int n){
 // Launch the selected sort
 void launchSort(SDL_Rect rightArea) {
     if (isButtonClicked(&listButtons[4])) {
-
         if (isNumberListSorted(numbers, numberRectList[numberRectListIndex])) {
             free(numbers);
             numbers = generateNumbers(numberRectList[numberRectListIndex]);
