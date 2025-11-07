@@ -26,8 +26,11 @@ extern Button listButtons[];
 
 typedef struct {
     long long memAccess;
+    long long memAccessSort;
     long long comparisons;
+    long long comparisonsSort;
     double timeElapsed;
+    double timeElapsedSort;
 } Metrics;
 
 extern Metrics oldMetrics;

@@ -7,6 +7,9 @@
 #include "sorting.h"
 #include "visual.h"
 
+Uint64 startSort = 0;
+Uint64 endSort = 0;
+
 // Create all the buttons
 void createButtons() {
 
@@ -112,51 +115,49 @@ bool isNumberListSorted(float* arr, int n){
 // Launch the selected sort
 void launchSort(SDL_Rect rightArea) {
     if (isButtonClicked(&listButtons[4])) {
-        oldMetrics = metrics;
-        metrics.memAccess = 0;
-        metrics.comparisons = 0;
-        metrics.timeElapsed = 0;
-        // Variables to record the process time
-        Uint64 start = 0;
-        Uint64 end = 0;
-        // Launch the sort and get the corresponding metrics
-        if (isNumberListSorted(numbers, numberRectList[numberRectListIndex])){
+
+        if (isNumberListSorted(numbers, numberRectList[numberRectListIndex])) {
             free(numbers);
             numbers = generateNumbers(numberRectList[numberRectListIndex]);
-            drawMenu(numberRectList[numberRectListIndex], sortList[sortListIndex]);
             if (numbers != NULL)
                 numbers = randomizeNumbers(numbers, numberRectList[numberRectListIndex]);
+            drawMenu(numberRectList[numberRectListIndex], sortList[sortListIndex]);
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderFillRect(renderer, &rightArea);
             drawRectangles(numbers, numberRectList[numberRectListIndex], -1);
-        } else {
-            switch (sortListIndex) {
-                case 0:
-                    start = SDL_GetPerformanceCounter();
-                    metrics = selectionSort(numberRectList[numberRectListIndex]);
-                    end = SDL_GetPerformanceCounter();
-                    break;
-                case 1:
-                    start = SDL_GetPerformanceCounter();
-                    metrics = insertionSort(numberRectList[numberRectListIndex]);
-                    end = SDL_GetPerformanceCounter();
-                    break;
-                case 2:
-                    start = SDL_GetPerformanceCounter();
-                    metrics = bubbleSort(numberRectList[numberRectListIndex]);
-                    end = SDL_GetPerformanceCounter();
-                    break;
-                case 3:
-                    start = SDL_GetPerformanceCounter();
-                    metrics = quicksort(numberRectList[numberRectListIndex]);
-                    end = SDL_GetPerformanceCounter();
-                    break;
-                default:
-                    break;
-            }
-            metrics.timeElapsed = (double)(end - start) / SDL_GetPerformanceFrequency();
-            drawMenu(numberRectList[numberRectListIndex], sortList[sortListIndex]);
+            return;
         }
+
+        oldMetrics = metrics;
+
+        metrics.memAccess = 0;
+        metrics.comparisons = 0;
+        metrics.timeElapsed = 0;
+        metrics.memAccessSort = 0;
+        metrics.comparisonsSort = 0;
+        metrics.timeElapsedSort = 0;
+
+        startSort = SDL_GetPerformanceCounter();
+        switch (sortListIndex) {
+            case 0:
+                metrics = selectionSort(numberRectList[numberRectListIndex]);
+                break;
+            case 1:
+                metrics = insertionSort(numberRectList[numberRectListIndex]);
+                break;
+            case 2:
+                metrics = bubbleSort(numberRectList[numberRectListIndex]);
+                break;
+            case 3:
+                metrics = quicksort(numberRectList[numberRectListIndex]);
+                break;
+            default:
+                break;
+        }
+        endSort = SDL_GetPerformanceCounter();
+        metrics.timeElapsedSort = (double)(endSort - startSort) / SDL_GetPerformanceFrequency();
+
+        drawMenu(numberRectList[numberRectListIndex], sortList[sortListIndex]);
     }
 }
 

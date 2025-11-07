@@ -105,7 +105,7 @@ void renderMetrics(TTF_Font* font, SDL_Rect TextMetricsRect) {
     SDL_Rect rect1 = {x1, startY, surfMain1->w, surfMain1->h};
     SDL_RenderCopy(renderer, texMain1, NULL, &rect1);
 
-    if (oldMetrics.memAccess != 0 && diffMem != 0) {
+    if (oldMetrics.memAccessSort != 0 && diffMem != 0) {
         sprintf(buffer, "%+lld", diffMem);
         SDL_Color diffColor = diffMem > 0 ? red : green;
         SDL_Surface* surfDiff1 = TTF_RenderText_Blended(font, buffer, diffColor);
@@ -132,7 +132,7 @@ void renderMetrics(TTF_Font* font, SDL_Rect TextMetricsRect) {
     SDL_Rect rect2 = {x2, y2, surfMain2->w, surfMain2->h};
     SDL_RenderCopy(renderer, texMain2, NULL, &rect2);
 
-    if (oldMetrics.comparisons != 0 && diffComp != 0) {
+    if (oldMetrics.comparisonsSort != 0 && diffComp != 0) {
         sprintf(buffer, "%+lld", diffComp);
         SDL_Color diffColor = diffComp > 0 ? red : green;
         SDL_Surface* surfDiff2 = TTF_RenderText_Blended(font, buffer, diffColor);
@@ -159,7 +159,7 @@ void renderMetrics(TTF_Font* font, SDL_Rect TextMetricsRect) {
     SDL_Rect rect3 = {x3, y3, surfMain3->w, surfMain3->h};
     SDL_RenderCopy(renderer, texMain3, NULL, &rect3);
 
-    if (oldMetrics.timeElapsed != 0 && diffTime != 0) {
+    if (oldMetrics.timeElapsedSort != 0 && diffTime != 0) {
         sprintf(buffer, "%+.6fs", diffTime);
         SDL_Color diffColor = diffTime > 0 ? red : green;
         SDL_Surface* surfDiff3 = TTF_RenderText_Blended(font, buffer, diffColor);
