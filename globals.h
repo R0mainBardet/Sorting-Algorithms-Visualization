@@ -35,3 +35,4 @@ typedef struct {
 
 extern Metrics oldMetrics;
 extern Metrics metrics;
+extern bool appQuit;

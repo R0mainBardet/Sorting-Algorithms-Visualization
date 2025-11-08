@@ -20,7 +20,7 @@ bool easteregg = false;
 bool isInteger = true;
 float* numbers = NULL;
 int numberRectList[] = {10, 50, 100, 250, 500, 1000, 1261, 5000, 10000};
-char* sortList[] = {"Selection Sort", "Insertion Sort", "Bubble Sort", "Quicksort"};
+char* sortList[] = {"Selection Sort", "Insertion Sort", "Bubble Sort", "Quicksort", "Merge Sort", "Bogo Sort", "Heap Sort", "Radix Sort", "Bucket Sort"};
 int sortListIndex = 0;
 int numberRectListIndex = 0;
 Metrics oldMetrics = {0, 0, 0};
@@ -32,6 +32,7 @@ SDL_Renderer* renderer = NULL;
 SDL_Texture* textureFond = NULL;
 TTF_Font* font = NULL;
 TTF_Font* fontMetrics = NULL;
+bool appQuit = false;
 
 int main(int argc, char* argv[]) {
 
@@ -100,6 +101,8 @@ int main(int argc, char* argv[]) {
 
     // Initial rendering: clear screen, draw menu, draw rectangles representing numbers, define drawing area for sorting visualization
     bool running = true;
+        // Global quit flag shared with sorting functions
+        appQuit = false;
     SDL_Event event;
 
     if (numbers) free(numbers);
@@ -109,9 +112,10 @@ int main(int argc, char* argv[]) {
     SDL_RenderPresent(renderer);
     drawRectangles(numbers, numberRectList[numberRectListIndex], -1);
     SDL_Rect rightArea = { WINDOW_WIDTH / 4, 0, 3 * WINDOW_WIDTH / 4, WINDOW_HEIGHT };
-    while (running) {
+    while (running && !appQuit) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
+                appQuit = true;
                 running = false;
             } else if (event.type == SDL_WINDOWEVENT){
                 // Window resize

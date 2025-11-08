@@ -150,6 +150,21 @@ void launchSort(SDL_Rect rightArea) {
             case 3:
                 metrics = quicksort(numberRectList[numberRectListIndex]);
                 break;
+            case 4:
+                metrics = mergeSort(numberRectList[numberRectListIndex]);
+                break;
+            case 5:
+                metrics = bogoSort(numberRectList[numberRectListIndex]);
+                break;
+            case 6:
+                metrics = heapSort(numberRectList[numberRectListIndex]);
+                break;
+            case 7:
+                metrics = radixSort(numberRectList[numberRectListIndex]);
+                break;
+            case 8:
+                metrics = bucketSort(numberRectList[numberRectListIndex]);
+                break;
             default:
                 break;
         }

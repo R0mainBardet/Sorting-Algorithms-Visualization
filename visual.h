@@ -2,7 +2,7 @@ SDL_Texture* chargerTexture(const char* chemin);
 
 void drawButton(Button* button);
 
-void drawRectangles(float* arr, int n, int actualValue);
+void drawRectangles(float* arr, int n, float actualValue);
 
 void renderTextInButton(const char* text, SDL_Color color, SDL_Rect buttonRect);
 

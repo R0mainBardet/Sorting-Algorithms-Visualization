@@ -6,6 +6,7 @@
 
 #include "globals.h"
 #include "utils.h"
+#include <math.h>
 
 // Load the texture
 SDL_Texture* chargerTexture(const char* chemin) {
@@ -26,7 +27,7 @@ void drawButton(Button* button) {
 }
 
 // Draw all the bar in the graph with the number list
-void drawRectangles(float* arr, int n, int actualValue) {
+void drawRectangles(float* arr, int n, float actualValue) {
     float rectMenuWidth = 3.0/4.0 * (float)WINDOW_WIDTH;
     float rectWidth = rectMenuWidth / n;
     float x = 0;
@@ -43,7 +44,8 @@ void drawRectangles(float* arr, int n, int actualValue) {
         rect.y = WINDOW_HEIGHT - rect.h;
         rect.x = WINDOW_WIDTH-rectMenuWidth + (int)x;
         rect.w = (int)(x + rectWidth) - (int)x;
-        if (arr[i] == actualValue) {
+        /* if actualValue < 0 -> no highlight */
+        if (actualValue >= 0.0f && fabsf(arr[i] - actualValue) < 1e-3f) {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         } else {
             if (isInteger){
