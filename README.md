@@ -1,3 +1,5 @@
+# Baptiste LORTON and Romain Bardet
+
 ## Run the project
 
 ### Libraries

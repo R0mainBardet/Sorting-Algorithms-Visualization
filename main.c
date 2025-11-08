@@ -17,7 +17,7 @@
 int WINDOW_WIDTH = 800;
 int WINDOW_HEIGHT = 600;
 bool easteregg = false;
-bool isInteger = false;
+bool isInteger = true;
 float* numbers = NULL;
 int numberRectList[] = {10, 50, 100, 250, 500, 1000, 1261, 5000, 10000};
 char* sortList[] = {"Selection Sort", "Insertion Sort", "Bubble Sort", "Quicksort"};
