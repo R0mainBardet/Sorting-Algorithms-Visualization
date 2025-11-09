@@ -88,12 +88,6 @@ This application implements and visualizes nine different sorting algorithms:
 - Very efficient when input is uniformly distributed
 - Good for floating-point numbers in a known range
 
-### Performance Metrics
-Each sorting algorithm's performance is measured using three metrics:
-- **Memory Access**: Number of times the algorithm reads or writes to memory
-- **Comparisons**: Number of times two elements are compared
-- **Time Elapsed**: Actual time taken to complete the sort
-
 The metrics are displayed in real-time and compared with the previous sort, helping users understand the efficiency differences between algorithms.
 
 ## How to ue the application
@@ -119,9 +113,11 @@ Click the **Start** button to launch the sort and visualize it live.
 
 - At the end of the sort, the button label changes to **Random** so you can shuffle the numbers again.
 
-### Metrics
-
-The top-left corner displays **metrics** that allow you to compare the number of **memory accesses**, **comparisons**, and **elapsed time** between the **current** sort and the **previous** sort.
+### Performance Metrics
+Each sorting algorithm's performance is measured using three metrics:
+- **Memory Access**: Number of times the algorithm reads or writes to memory
+- **Comparisons**: Number of times two elements are compared
+- **Time Elapsed**: Actual time taken to complete the sort
 
 ## Easteregg
 
