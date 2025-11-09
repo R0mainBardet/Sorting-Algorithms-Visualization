@@ -21,9 +21,80 @@ gcc main.c utils.c sorting.c visual.c -o sorting `sdl2-config --cflags --libs` -
 ./sorting
 ```
 
-## Sortings
+## Sorting Algorithms
 
-ROMAIN EXPLIQUE LES SORT
+This application implements and visualizes nine different sorting algorithms:
+
+### Selection Sort
+- Works by repeatedly finding the minimum element from the unsorted portion and placing it at the beginning
+- Time Complexity: O(n²) in all cases
+- Space Complexity: O(1)
+- Best suited for small arrays
+- Minimizes the number of swaps compared to bubble sort
+
+### Insertion Sort
+- Builds the final sorted array one item at a time
+- Time Complexity: O(n²) in average and worst case, O(n) in best case
+- Space Complexity: O(1)
+- Very efficient for small data sets
+- Adaptive: performance improves if data is already partially sorted
+
+### Bubble Sort
+- Simple algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order
+- Time Complexity: O(n²) in average and worst case, O(n) in best case
+- Space Complexity: O(1)
+- Easy to understand and implement
+- Not suitable for large datasets
+
+### Quicksort
+- Uses divide-and-conquer strategy with a pivot element
+- Time Complexity: O(n log n) average case, O(n²) worst case
+- Space Complexity: O(log n)
+- One of the fastest sorting algorithms in practice
+- Very efficient for large datasets
+
+### Merge Sort
+- Uses the divide-and-conquer strategy to sort the array
+- Time Complexity: O(n log n) in all cases
+- Space Complexity: O(n)
+- Stable sorting algorithm
+- Efficient for large datasets but requires additional memory
+
+### Bogo Sort (Permutation Sort)
+- Randomly shuffles the array until it's sorted
+- Time Complexity: O(n × n!) average case, unbounded worst case
+- Space Complexity: O(1)
+- Not practical for real use
+- Included as an educational example of an inefficient algorithm
+
+### Heap Sort
+- Uses a binary heap data structure
+- Time Complexity: O(n log n) in all cases
+- Space Complexity: O(1)
+- In-place sorting algorithm
+- Efficient for large datasets
+
+### Radix Sort
+- Non-comparative integer sorting algorithm
+- Time Complexity: O(d × n) where d is the number of digits
+- Space Complexity: O(n + k) where k is the range of values
+- Very efficient for integers or strings
+- Sorts data digit by digit
+
+### Bucket Sort
+- Distributes elements into buckets then sorts them individually
+- Time Complexity: O(n + k) average case, O(n²) worst case
+- Space Complexity: O(n + k)
+- Very efficient when input is uniformly distributed
+- Good for floating-point numbers in a known range
+
+### Performance Metrics
+Each sorting algorithm's performance is measured using three metrics:
+- **Memory Access**: Number of times the algorithm reads or writes to memory
+- **Comparisons**: Number of times two elements are compared
+- **Time Elapsed**: Actual time taken to complete the sort
+
+The metrics are displayed in real-time and compared with the previous sort, helping users understand the efficiency differences between algorithms.
 
 ## How to ue the application
 
